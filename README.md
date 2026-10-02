@@ -68,4 +68,6 @@ As implementation lands, replace illustrative examples with runnable ones and do
 - [CUPS documentation](https://openprinting.github.io/cups/)
 - [CUPS IPP operations](https://openprinting.github.io/cups/doc/spec-ipp.html)
 
-No license has been chosen yet.
+## License
+
+This project is licensed under the [MIT License](LICENSE).

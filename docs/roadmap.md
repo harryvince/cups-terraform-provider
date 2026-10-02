@@ -5,7 +5,8 @@ The disposable CUPS test environment is implemented; provider implementation rem
 ## 1. Resolve foundations and scaffold
 
 - [ ] Confirm the first scope: queues on an existing CUPS server.
-- [ ] Select the module path, registry namespace, and license with the repository owner.
+- [x] Add the MIT license selected by the repository owner.
+- [ ] Select the module path and registry namespace with the repository owner.
 - [ ] Verify a CUPS client approach, including administrative authentication and driver/model handling.
 - [x] Add an isolated Docker Compose CUPS server, simulated printer, and lifecycle smoke check (see [testing.md](testing.md)).
 - [ ] Select initial supported provider versions based on acceptance test coverage.

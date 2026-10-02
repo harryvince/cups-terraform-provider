@@ -4,6 +4,8 @@
 
 The confirmed goal is a Terraform provider for managing a Linux CUPS installation. The user asked for documentation and `AGENTS.md` first so future chats can continue development.
 
+The user selected the [MIT License](../LICENSE) for this repository.
+
 The rest of this document records proposed defaults and behavior requirements for implementation. It does not claim that these features exist or that the user has selected every design choice.
 
 ## Initial boundary
@@ -84,7 +86,7 @@ Keep acceptance tests opt-in. They must never automatically target the developer
 ## Decisions still open
 
 1. Confirm whether managing an existing server matches the desired first scope, or whether installation/service configuration is required.
-2. Choose the repository/module identity, Terraform Registry namespace, and license.
+2. Choose the repository/module identity and Terraform Registry namespace.
 3. Choose and verify the CUPS client, transport, and authentication mechanisms.
 4. Define the supported CUPS, Terraform, and Go versions from actual test coverage.
 5. Resolve driverless queue creation and any legacy driver/PPD support.

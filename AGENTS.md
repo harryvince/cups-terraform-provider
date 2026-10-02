@@ -25,7 +25,7 @@ After completing changes and the relevant verification, commit the task's change
 
 The proposed first milestone manages queues on an existing CUPS server. Go and the Terraform Plugin Framework are the starting direction. Prefer IPP/CUPS administrative operations behind a dedicated client abstraction.
 
-These are documented proposals, not claims that the user has finalized the design. Resolve routine implementation details using the task context. Ask for missing information when it materially affects scope or public identity, such as the module path, publishing namespace, or license. Do not invent these or treat illustrative examples as a frozen schema.
+These are documented proposals, not claims that the user has finalized the design. Resolve routine implementation details using the task context. Ask for missing information when it materially affects scope or public identity, such as the module path or publishing namespace. Do not invent these or treat illustrative examples as a frozen schema. The user has selected the MIT license; retain the root `LICENSE` file.
 
 Keep Linux package installation, service management, print jobs, and direct CUPS configuration-file editing outside the first resource unless the user expands scope. Verify driver/model requirements before claiming that a queue can be created from its device URI alone.
 
