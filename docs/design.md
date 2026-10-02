@@ -55,6 +55,8 @@ Candidate attributes:
 
 Do not freeze the schema until driver/model handling is settled. Verify how to create a persistent driverless queue and what printer reachability is required. Decide whether the first version supports legacy PPDs, supports only a specific driverless flow, or needs another model selection mechanism. Do not assume a device URI alone is sufficient to create a working queue.
 
+The Docker Compose fixture has verified authenticated `CUPS-Add-Modify-Printer` with `ppd-name=everywhere` against Debian's CUPS `2.4.2-3+deb12u9` and its reachable simulated IPP printer. CUPS generated a driverless PPD; the smoke check waits for it because generation may finish after the create response. This is evidence for that test environment, not yet a provider compatibility guarantee or a finalized driver schema.
+
 Administrative settings such as sharing, accepting jobs, and enabled/paused state are candidates for a later milestone. Avoid mixing transient device health with managed configuration.
 
 ## Lifecycle contract
@@ -77,7 +79,7 @@ Unit tests should cover attribute mapping, normalization, validation, unknown/nu
 
 Acceptance tests should use a disposable, explicitly configured CUPS instance and cover create/read/update/delete/import, external changes, external deletion, and a second plan with no changes. Test duplicate-name handling so existing queues are preserved. Queue setup should not require a physical printer unless a specific integration test explicitly declares that requirement; verify this against the selected driver/model strategy.
 
-Keep acceptance tests opt-in. They must never automatically target the developer's system printing service or real printer queues. The isolated test setup and relevant environment variables need to be documented when implemented.
+Keep acceptance tests opt-in. They must never automatically target the developer's system printing service or real printer queues. The [Docker Compose fixture](testing.md) provides an isolated CUPS server and simulated IPP printer. Its smoke check exercises the server directly; provider acceptance tests remain to be implemented.
 
 ## Decisions still open
 
@@ -87,7 +89,7 @@ Keep acceptance tests opt-in. They must never automatically target the developer
 4. Define the supported CUPS, Terraform, and Go versions from actual test coverage.
 5. Resolve driverless queue creation and any legacy driver/PPD support.
 6. Finalize attribute names, defaults, clear/reset behavior, import ID, and secret handling.
-7. Choose a reproducible disposable CUPS test environment.
+7. Extend the existing Docker Compose test environment into provider acceptance tests and a version compatibility matrix.
 
 ## Primary references
 

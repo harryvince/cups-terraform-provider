@@ -1,0 +1,53 @@
+name: cups-provider-test
+
+services:
+  cups:
+    build: ./testenv
+    command: [cups]
+    environment:
+      CUPS_TEST_ADMIN_PASSWORD: ${CUPS_TEST_ADMIN_PASSWORD:-cups-test-password}
+    networks: [printing]
+    depends_on:
+      printer:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, http://localhost:631/]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  printer:
+    build: ./testenv
+    hostname: printer
+    command: [printer]
+    networks:
+      printing:
+        aliases: [printer.local]
+    healthcheck:
+      test: [CMD, ipptool, -q, ipp://localhost:8000/ipp/print, /usr/share/cups/ipptool/get-printer-attributes.test]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  gateway:
+    build: ./testenv
+    command: [socat, "TCP-LISTEN:631,fork,reuseaddr", "TCP:cups:631"]
+    ports:
+      - "127.0.0.1:${CUPS_TEST_PORT:-8631}:631"
+    networks: [access, printing]
+    depends_on:
+      cups:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, http://localhost:631/]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+networks:
+  access:
+  printing:
+    internal: true

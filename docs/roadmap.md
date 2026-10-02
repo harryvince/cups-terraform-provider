@@ -1,13 +1,14 @@
 # Implementation roadmap
 
-Nothing in this roadmap is implemented yet. Update the checkboxes when the work and its verification are complete, and keep design decisions in [design.md](design.md).
+The disposable CUPS test environment is implemented; provider implementation remains outstanding. Update the checkboxes when the work and its verification are complete, and keep design decisions in [design.md](design.md).
 
 ## 1. Resolve foundations and scaffold
 
 - [ ] Confirm the first scope: queues on an existing CUPS server.
 - [ ] Select the module path, registry namespace, and license with the repository owner.
 - [ ] Verify a CUPS client approach, including administrative authentication and driver/model handling.
-- [ ] Select initial supported versions and an isolated CUPS test setup.
+- [x] Add an isolated Docker Compose CUPS server, simulated printer, and lifecycle smoke check (see [testing.md](testing.md)).
+- [ ] Select initial supported provider versions based on acceptance test coverage.
 - [ ] Add a minimal Go provider using the Terraform Plugin Framework.
 - [ ] Add build, formatting, unit-test, and local provider development instructions.
 

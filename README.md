@@ -4,7 +4,7 @@ A project to manage a CUPS printing server through Terraform, starting with prin
 
 ## Status
 
-This repository currently contains planning documentation only. There is no provider implementation, build system, release, or published Terraform Registry package yet. Resource names and configuration examples below are proposals, not a supported API.
+This repository contains planning documentation and a disposable Docker Compose CUPS test environment. There is no provider implementation, Go build system, release, or published Terraform Registry package yet. Resource names and configuration examples below are proposals, not a supported API.
 
 The initial user request is to create a Terraform provider to manage a Linux CUPS installation, beginning with documentation and agent instructions that let later chats continue the work.
 
@@ -48,7 +48,16 @@ resource "cups_printer" "office" {
 
 ## Continue development
 
-Read [AGENTS.md](AGENTS.md), [the design](docs/design.md), and [the roadmap](docs/roadmap.md). The next milestone is a minimal provider skeleton and a verified CUPS client approach. There are currently no build or test commands to run.
+Read [AGENTS.md](AGENTS.md), [the design](docs/design.md), and [the roadmap](docs/roadmap.md). The next milestone is a minimal provider skeleton and a verified CUPS client approach.
+
+Start the isolated CUPS server and simulated printer, then check the fixture:
+
+```sh
+docker compose up --build --wait --wait-timeout 120
+docker compose exec -T cups python3 /opt/testenv/smoke.py
+```
+
+The server is available at `http://127.0.0.1:8631`. See [testing instructions](docs/testing.md) for credentials, isolation, reset commands, and limitations. No Terraform provider tests exist yet.
 
 As implementation lands, replace illustrative examples with runnable ones and document actual prerequisites, credentials, supported versions, import behavior, and development commands.
 

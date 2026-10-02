@@ -4,13 +4,14 @@
 
 This repository is for a Terraform provider that manages a Linux CUPS installation. The user requested documentation and these instructions first so new chats can resume with project context.
 
-At the initial documentation milestone there is no implementation, Go module, build tooling, or published provider. Verify the current repository before relying on this statement; update it as code is added.
+The repository has planning documentation and a Docker Compose CUPS test environment, but no provider implementation, Go module, Go build tooling, or published provider. Verify the current repository before relying on this statement; update it as code is added.
 
 Read these files at the start of substantive work:
 
 1. `README.md` for project scope and status.
 2. `docs/design.md` for proposed architecture, lifecycle behavior, and unresolved decisions.
 3. `docs/roadmap.md` for milestones and completion criteria.
+4. `docs/testing.md` when working on the test environment or integration tests.
 
 Inspect `git status` and relevant existing code before making changes. Preserve unrelated user changes. Do not publish release artifacts or modify a real CUPS installation unless the user requests those actions.
 
@@ -45,7 +46,16 @@ Keep Linux package installation, service management, print jobs, and direct CUPS
 
 ## Verification and documentation
 
-There are no runnable checks at the documentation-only milestone. Do not report tests as passing until they actually exist and run.
+The test fixture has these runnable checks, from the repository root:
+
+```sh
+docker compose config --quiet
+docker compose up --build --wait --wait-timeout 120
+docker compose exec -T cups python3 /opt/testenv/smoke.py
+docker compose down
+```
+
+The smoke check validates the isolated CUPS environment, not the unimplemented provider. See `docs/testing.md` for credentials and endpoint details. Do not report tests as passing until they actually run.
 
 Once Go code exists, run formatting and the relevant unit tests; add exact commands here when the tooling is established. Use meaningful tests for protocol mapping, errors, Terraform lifecycle, drift, import, and stable plans. Run acceptance tests only against an isolated, explicitly selected CUPS instance. Never default tests to the host's real printing service.
 
