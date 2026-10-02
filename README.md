@@ -6,6 +6,8 @@ A project to manage a CUPS printing server through Terraform, starting with prin
 
 This repository contains a working provider POC, a disposable Docker Compose CUPS environment, and tests using the real Terraform CLI. The provider is for local development; there is no release or Terraform Registry package yet, and its schema may change before release.
 
+GitHub Actions checks and signed, multi-platform release packaging are configured. See [publishing instructions](docs/releasing.md) for version tags, signing-key recovery, and the remaining Terraform Registry setup. No release tag has been pushed.
+
 The initial user request is to create a Terraform provider to manage a Linux CUPS installation, beginning with documentation and agent instructions that let later chats continue the work.
 
 ## POC scope

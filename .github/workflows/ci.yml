@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Go ${{ matrix.go }} checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.25.x', '1.27.x']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: ${{ matrix.go }}
+          cache: true
+      - name: Check formatting
+        run: test -z "$(gofmt -l main.go internal)"
+      - name: Verify dependencies
+        run: go mod verify
+      - name: Unit and protocol tests
+        run: go test -race -timeout=2m ./...
+      - name: Vet
+        run: make vet
+      - name: Build
+        run: make build
+
+  acceptance:
+    name: Terraform and CUPS acceptance
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.27.1'
+          cache: true
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3
+        with:
+          terraform_version: '1.16.4'
+          terraform_wrapper: false
+      - name: Check Terraform formatting
+        run: terraform fmt -check -recursive examples
+      - name: Start disposable CUPS
+        run: make testenv-up
+      - name: Fixture smoke check
+        run: docker compose exec -T cups python3 /opt/testenv/smoke.py
+      - name: Provider lifecycle
+        env:
+          CUPS_ACC_ENDPOINT: http://127.0.0.1:8631
+          CUPS_ACC_USERNAME: cups-admin
+          CUPS_ACC_PASSWORD: cups-test-password
+        run: make test-acc
+      - name: Fixture logs on failure
+        if: failure()
+        run: docker compose logs --no-color
+      - name: Remove disposable CUPS
+        if: always()
+        run: make testenv-down
+
+  packaging:
+    name: Release packaging preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.27.1'
+          cache: true
+      - name: Validate release configuration
+        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
+        with:
+          version: v2.18.2
+          args: check
+      - name: Build unsigned release preview
+        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
+        with:
+          version: v2.18.2
+          args: release --snapshot --clean --skip=publish,sign

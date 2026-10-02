@@ -4,7 +4,7 @@
 
 This repository is for a Terraform provider that manages a Linux CUPS installation. The user requested documentation and these instructions first so new chats can resume with project context.
 
-The repository has a working Go provider POC, a Docker Compose CUPS test environment, unit/framework protocol tests, and opt-in acceptance tests using the real Terraform CLI. The provider is not published. Verify the current repository before relying on this statement; update it as code is added.
+The repository has a working Go provider POC, a Docker Compose CUPS test environment, unit/framework protocol tests, and opt-in acceptance tests using the real Terraform CLI. GitHub Actions CI and signed GoReleaser releases are configured. The provider is not published. Verify the current repository before relying on this statement; update it as code is added.
 
 Read these files at the start of substantive work:
 
@@ -13,6 +13,7 @@ Read these files at the start of substantive work:
 3. `docs/roadmap.md` for milestones and completion criteria.
 4. `docs/testing.md` when working on the test environment or integration tests.
 5. `docs/development.md`, `docs/index.md`, and `docs/resources/printer.md` for local usage and the implemented schema.
+6. `docs/releasing.md` when working on CI, signing, packaging, or publishing.
 
 Inspect `git status` and relevant existing code before making changes. Preserve unrelated user changes. Do not publish release artifacts or modify a real CUPS installation unless the user requests those actions.
 
@@ -78,3 +79,9 @@ Check current primary documentation when choosing dependencies, framework APIs, 
 Keep the README, design decisions, roadmap, and examples consistent with the implementation. Clearly distinguish implemented behavior from planned behavior. When adding tooling, document how to build, test, and run a local provider and how to provision the test server.
 
 In a handoff, describe what changed, what was verified, what remains uncertain, and the next concrete step. Do not claim the provider is usable or published before that is true.
+
+## Release automation
+
+CI checks Go 1.25/1.27, runs isolated Terraform/CUPS acceptance tests, and builds unsigned six-platform snapshots. Version tags trigger CI followed by signed GitHub Releases. Actions and GoReleaser are pinned; verify upstream documentation when updating them. Dedicated RSA signing secrets are configured in GitHub; the public key is `release-signing-key.asc`. Never read or print the ignored `.release-signing/` private material in routine work or stage it. Preserve its local backup.
+
+The current repository name is not eligible for public Terraform Registry registration. The owner must select the namespace and authorize the associated repository rename/source-address updates. Do not claim Registry publication until registration, a selected release, and a clean installation have been verified. Do not create release tags solely to test the workflow.

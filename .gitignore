@@ -1,4 +1,6 @@
 /bin/
+/dist/
+/.release-signing/
 .terraform/
 *.tfstate
 *.tfstate.*

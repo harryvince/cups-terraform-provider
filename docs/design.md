@@ -87,13 +87,13 @@ Acceptance tests are opt-in, require explicit settings, and reject non-loopback 
 
 ## Decisions still open
 
-1. Choose a Terraform Registry namespace and release workflow.
+1. Choose a Terraform Registry namespace, confirm its required repository rename, and complete registration. GitHub Actions and signed release packaging are configured; see [releasing.md](releasing.md).
 2. Expand compatibility coverage across CUPS, Terraform, Go, and host platforms.
 3. Add end-to-end TLS tests and decide whether additional authentication/transport methods are needed.
 4. Decide whether to add enablement, accepting-jobs settings, model selection, or legacy PPD support.
 5. Verify deletion effects on pending jobs before production use.
 6. Decide whether stronger ownership/concurrency controls are needed beyond the documented CUPS API limitation.
-7. Stabilize the schema and automate documentation generation/CI before a release.
+7. Stabilize the schema and consider documentation generation before a release. CI is configured.
 
 ## Primary references
 

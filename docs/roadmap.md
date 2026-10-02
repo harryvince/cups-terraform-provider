@@ -39,12 +39,14 @@ Completion: acceptance tests prove the full lifecycle and import against the dec
 
 ## 4. Prepare a release
 
-- [ ] Add CI for the checks and supported platforms selected during implementation.
-- [ ] Select versioning, packaging, signing, and release tooling.
+- [x] Add CI for unit/protocol checks, isolated acceptance tests, and six-platform packaging previews.
+- [x] Configure Semantic Version tags, GoReleaser, RSA signing, and GitHub Releases.
+- [ ] Select the Registry identity, rename the repository if needed, and register its public signing key.
+- [ ] Publish a selected version and verify clean installation from the Registry.
 - [ ] Publish installation instructions using the real provider source address.
 - [ ] Review documentation and examples against the released schema.
 
-Publishing is a separate action to perform when requested; this roadmap does not authorize a release.
+See [releasing.md](releasing.md) for the configured workflows and remaining registration steps. Publishing is a separate action to perform when requested; this roadmap does not authorize a release.
 
 ## Later candidates
 
