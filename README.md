@@ -4,51 +4,62 @@ A project to manage a CUPS printing server through Terraform, starting with prin
 
 ## Status
 
-This repository contains planning documentation and a disposable Docker Compose CUPS test environment. There is no provider implementation, Go build system, release, or published Terraform Registry package yet. Resource names and configuration examples below are proposals, not a supported API.
+This repository contains a working provider POC, a disposable Docker Compose CUPS environment, and tests using the real Terraform CLI. The provider is for local development; there is no release or Terraform Registry package yet, and its schema may change before release.
 
 The initial user request is to create a Terraform provider to manage a Linux CUPS installation, beginning with documentation and agent instructions that let later chats continue the work.
 
-## Proposed scope
+## POC scope
 
-Start by managing printer queues on an **existing CUPS server**:
+Manage driverless IPP printer queues on an **existing CUPS server**:
 
 - Configure a connection to a local or remote CUPS server.
 - Create, read, update, delete, and import individual printer queues.
 - Manage a queue's device URI, description, and location.
 - Detect configuration changes made outside Terraform.
 
-Installing CUPS packages, managing the Linux service, and editing server configuration are deferred. This boundary is a proposed starting point; confirm it before expanding the implementation. Printer classes, default-printer selection, queue policies, and additional print options can follow once the first resource works reliably.
+Changing a queue's name or device URI replaces it. Description and location update in place; omitting either clears it. Newly created queues remain paused and reject jobs under the tested CUPS defaults. Queue enablement and accepting-jobs settings are not managed yet.
+
+Installing CUPS packages, managing the Linux service, and editing server configuration are deferred. Printer classes, default-printer selection, queue policies, and additional print options can follow.
 
 Print jobs and consumables are operational data rather than the initial Terraform-managed configuration. Creating or refreshing a resource should not print a test page.
 
-## Proposed approach
+## Implementation
 
-Use Go and the [Terraform Plugin Framework](https://developer.hashicorp.com/terraform/plugin/framework), which HashiCorp recommends for provider development. Prefer a client that uses IPP and CUPS administrative operations over parsing command output or editing CUPS-managed files. CUPS documents these operations in its [IPP implementation reference](https://openprinting.github.io/cups/doc/spec-ipp.html).
+The provider uses Go and the [Terraform Plugin Framework](https://developer.hashicorp.com/terraform/plugin/framework). Its separate CUPS client uses [go-ipp](https://github.com/phin1x/go-ipp) for the protocol codec and Go's HTTP client for transport, cancellation, password authentication, and certificate verification. It uses [CUPS IPP administrative operations](https://openprinting.github.io/cups/doc/spec-ipp.html) directly.
 
-The client library, authentication approach, supported CUPS versions, Go version, and Terraform version still need to be selected and verified. See [the design](docs/design.md) for behavior requirements and open decisions.
+Build with Go 1.25 or newer. The POC has been tested on Linux amd64 with Go 1.27.1, Terraform 1.16.4, and Debian's CUPS `2.4.2-3+deb12u9`. Broader compatibility remains unverified. See [the design](docs/design.md) for decisions and limitations.
 
-## Illustrative configuration
+## Configuration
 
-This example expresses the intended experience. It cannot run yet, and the schema may change. The registry source address is intentionally omitted until an owner and publishing namespace are chosen.
+This configuration targets the Compose fixture after following [local development setup](docs/development.md). `terraform.local/local/cups` is a local development address, not a published package.
 
 ```hcl
-provider "cups" {
-  endpoint = "http://localhost:631"
+terraform {
+  required_providers {
+    cups = {
+      source = "terraform.local/local/cups"
+    }
+  }
 }
 
+# Set CUPS_ENDPOINT, CUPS_USERNAME and CUPS_PASSWORD in your environment.
+provider "cups" {}
+
 resource "cups_printer" "office" {
-  name        = "office"
-  device_uri  = "ipp://printer.example.test/ipp/print"
+  name        = "poc-office"
+  device_uri  = "ipp://printer.local:8000/ipp/print"
   description = "Office printer"
   location    = "First floor"
 }
 ```
 
-`endpoint` refers to the CUPS server managed by Terraform. `device_uri` refers to the printer or backend used by that server. The example does not select a driver or print model; that part of the schema must be resolved before creating real queues.
+`endpoint` refers to the CUPS server managed by Terraform. `device_uri` refers to the printer reached by that server. Creation uses the `everywhere` driverless model and waits for its generated PPD. The CUPS server must be able to reach the device. Device URIs containing credentials are rejected.
+
+See [provider settings](docs/index.md), [the printer resource](docs/resources/printer.md), and [the runnable example](examples/provider/main.tf).
 
 ## Continue development
 
-Read [AGENTS.md](AGENTS.md), [the design](docs/design.md), and [the roadmap](docs/roadmap.md). The next milestone is a minimal provider skeleton and a verified CUPS client approach.
+Read [AGENTS.md](AGENTS.md), [the design](docs/design.md), and [the roadmap](docs/roadmap.md). Build and run unit checks with `make build`, `make test`, and `make vet`.
 
 Start the isolated CUPS server and simulated printer, then check the fixture:
 
@@ -57,9 +68,9 @@ docker compose up --build --wait --wait-timeout 120
 docker compose exec -T cups python3 /opt/testenv/smoke.py
 ```
 
-The server is available at `http://127.0.0.1:8631`. See [testing instructions](docs/testing.md) for credentials, isolation, reset commands, and limitations. No Terraform provider tests exist yet.
+The server is available at `http://127.0.0.1:8631`. See [testing instructions](docs/testing.md) for the provider acceptance loop, credentials, isolation, reset commands, and limitations. Acceptance tests require explicit opt-in and connection settings.
 
-As implementation lands, replace illustrative examples with runnable ones and document actual prerequisites, credentials, supported versions, import behavior, and development commands.
+The POC protects ordinary creates from overwriting existing queues, but CUPS does not provide an atomic create-only operation. Concurrent external administrators can race the existence check. Use an import workflow for existing queues and avoid concurrent management of the same queue.
 
 ## References
 

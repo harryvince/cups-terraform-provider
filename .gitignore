@@ -1,0 +1,8 @@
+/bin/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+.terraformrc.local
+__pycache__/

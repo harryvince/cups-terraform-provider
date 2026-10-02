@@ -11,7 +11,7 @@ docker compose up --build --wait --wait-timeout 120
 docker compose exec -T cups python3 /opt/testenv/smoke.py
 ```
 
-The smoke check sends IPP administrative requests to the Compose server. It checks authentication, creates a uniquely named driverless queue using `ppd-name=everywhere`, verifies a generated PPD, reads and updates its configuration, deletes it, and verifies the not-found response. It does not submit print jobs. This verifies the test environment; it is not a Terraform provider acceptance test, because the provider has not been implemented yet.
+The smoke check sends IPP administrative requests to the Compose server. It checks authentication, creates a uniquely named driverless queue using `ppd-name=everywhere`, verifies a generated PPD, reads and updates its configuration, deletes it, and verifies the not-found response. It does not submit print jobs. This verifies the test environment directly; the provider has a separate Terraform acceptance loop below.
 
 ## Connection settings
 
@@ -62,9 +62,39 @@ Start again with `docker compose up --wait --wait-timeout 120` for a clean serve
 - The image uses Debian Bookworm's CUPS packages. Package revisions and the base-image tag can change on rebuild; this is a repeatable development setup, not a byte-for-byte pinned compatibility matrix. Record the installed version when reporting failures.
 - This fixture does not cover TLS verification, other authentication mechanisms, USB devices, legacy PPDs, or physical printer behavior.
 
-Once provider acceptance tests exist, require an explicit opt-in and endpoint. Use this fixture's host endpoint rather than falling back to `localhost:631`.
+Provider acceptance tests require an explicit opt-in and endpoint. They reject non-loopback endpoints and port 631, so the local system printing service is never their default target.
 
 The initial fixture was tested with Docker Engine 29.8.1, Compose v5.5.1, and CUPS `2.4.2-3+deb12u9` on Linux amd64. Other platforms remain unverified.
+
+## Provider acceptance loop
+
+With Go and Terraform installed, start Compose from the repository root and run:
+
+```sh
+make testenv-up
+CUPS_ACC_ENDPOINT=http://127.0.0.1:8631 \
+  CUPS_ACC_USERNAME=cups-admin \
+  CUPS_ACC_PASSWORD=cups-test-password \
+  make test-acc
+make testenv-down
+```
+
+`make test-acc` sets `CUPS_ACC=1`. All three `CUPS_ACC_*` connection variables must be supplied; there are no credential or endpoint defaults. If you override the fixture's port or password, supply the matching acceptance values. The test uses its own temporary CLI configuration, binary, Terraform configuration, and state, so it does not require or modify your `.terraformrc`.
+
+The loop builds the provider, invokes the real Terraform CLI with a local development override, and verifies:
+
+- Create/read, in-place metadata updates, and subsequent plans with no changes.
+- Device URI changes planning replacement without contacting the proposed device.
+- Import and stable plans after import.
+- External metadata drift detection and correction.
+- Clearing metadata by removing it from configuration.
+- Queue replacement on name change.
+- External deletion followed by recreation.
+- Rejection of duplicate creates without overwriting the existing queue, then import and destroy.
+
+It uses unique queue names and cleans up those queues even after a failure. It never submits print jobs. Standard `make test` skips this test unless `CUPS_ACC=1` is already set. An endpoint restriction cannot prove that a server is disposable: use only the explicitly started fixture at the supplied port.
+
+Unit and framework protocol tests cover response mapping, missing/error classification, malformed responses, duplicate protection, acknowledged partial creation, bounded PPD waits, context cancellation, trusted/untrusted TLS, redirect handling, null/unknown configuration, environment fallback, and input validation. Run `make test` and `make vet` before the acceptance loop when changing Go code.
 
 ## Troubleshooting
 

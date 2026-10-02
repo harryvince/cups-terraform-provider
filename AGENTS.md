@@ -4,7 +4,7 @@
 
 This repository is for a Terraform provider that manages a Linux CUPS installation. The user requested documentation and these instructions first so new chats can resume with project context.
 
-The repository has planning documentation and a Docker Compose CUPS test environment, but no provider implementation, Go module, Go build tooling, or published provider. Verify the current repository before relying on this statement; update it as code is added.
+The repository has a working Go provider POC, a Docker Compose CUPS test environment, unit/framework protocol tests, and opt-in acceptance tests using the real Terraform CLI. The provider is not published. Verify the current repository before relying on this statement; update it as code is added.
 
 Read these files at the start of substantive work:
 
@@ -12,6 +12,7 @@ Read these files at the start of substantive work:
 2. `docs/design.md` for proposed architecture, lifecycle behavior, and unresolved decisions.
 3. `docs/roadmap.md` for milestones and completion criteria.
 4. `docs/testing.md` when working on the test environment or integration tests.
+5. `docs/development.md`, `docs/index.md`, and `docs/resources/printer.md` for local usage and the implemented schema.
 
 Inspect `git status` and relevant existing code before making changes. Preserve unrelated user changes. Do not publish release artifacts or modify a real CUPS installation unless the user requests those actions.
 
@@ -23,11 +24,11 @@ After completing changes and the relevant verification, commit the task's change
 
 ## Working direction
 
-The proposed first milestone manages queues on an existing CUPS server. Go and the Terraform Plugin Framework are the starting direction. Prefer IPP/CUPS administrative operations behind a dedicated client abstraction.
+The POC manages driverless IPP queues on an existing CUPS server. It uses Go with the Terraform Plugin Framework and a separate IPP/CUPS client. The module path matches the repository, `github.com/harryvince/cups-terraform-provider`; the local-only provider address is `terraform.local/local/cups`.
 
-These are documented proposals, not claims that the user has finalized the design. Resolve routine implementation details using the task context. Ask for missing information when it materially affects scope or public identity, such as the module path or publishing namespace. Do not invent these or treat illustrative examples as a frozen schema. The user has selected the MIT license; retain the root `LICENSE` file.
+The implemented POC schema remains provisional until release. Resolve routine implementation details using the task context. Ask for missing information when it materially affects scope or public identity, such as the publishing namespace. Do not invent a registry namespace. The user has selected the MIT license; retain the root `LICENSE` file.
 
-Keep Linux package installation, service management, print jobs, and direct CUPS configuration-file editing outside the first resource unless the user expands scope. Verify driver/model requirements before claiming that a queue can be created from its device URI alone.
+Keep Linux package installation, service management, print jobs, and direct CUPS configuration-file editing outside the first resource unless the user expands scope. Creation uses the `everywhere` model and requires a device reachable from CUPS. Name/device URI changes replace a queue; description/location changes update in place and omitted metadata clears it. Enablement and accepting-jobs settings remain outside the POC.
 
 ## Implementation expectations
 
@@ -55,9 +56,22 @@ docker compose exec -T cups python3 /opt/testenv/smoke.py
 docker compose down
 ```
 
-The smoke check validates the isolated CUPS environment, not the unimplemented provider. See `docs/testing.md` for credentials and endpoint details. Do not report tests as passing until they actually run.
+The smoke check validates the isolated CUPS environment directly. Provider checks, from the repository root:
 
-Once Go code exists, run formatting and the relevant unit tests; add exact commands here when the tooling is established. Use meaningful tests for protocol mapping, errors, Terraform lifecycle, drift, import, and stable plans. Run acceptance tests only against an isolated, explicitly selected CUPS instance. Never default tests to the host's real printing service.
+```sh
+make fmt
+make build
+make test
+make vet
+CUPS_ACC_ENDPOINT=http://127.0.0.1:8631 \
+  CUPS_ACC_USERNAME=cups-admin \
+  CUPS_ACC_PASSWORD=cups-test-password \
+  make test-acc
+```
+
+Start Compose before the acceptance command and shut it down afterward. Acceptance tests require explicit opt-in and settings, use temporary Terraform state and CLI configuration, and reject non-loopback endpoints and port 631. See `docs/testing.md` for credentials and endpoint details. Do not report tests as passing until they actually run.
+
+Run formatting and relevant unit/protocol tests for Go changes; run the acceptance loop for lifecycle or client behavior changes. Use meaningful tests for protocol mapping, errors, Terraform lifecycle, drift, import, and stable plans. Run acceptance tests only against an isolated, explicitly selected CUPS instance. Never default tests to the host's real printing service.
 
 Check current primary documentation when choosing dependencies, framework APIs, or CUPS operations. Record compatibility based on verification, not guesswork. Avoid adding generated framework boilerplate or dependencies before an implementation task calls for them.
 
