@@ -1,0 +1,3 @@
+# Verify the minimum supported Go version without duplicating versions in YAML.
+[tools]
+go = "1.25.0"

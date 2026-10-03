@@ -37,6 +37,10 @@ examples/               Runnable local Terraform example
 docs/                   Design, development, testing, provider/resource reference
 ```
 
+## Tooling
+
+Mise configuration owns tool pins and development/CI tasks. Go dependencies remain in Go modules. Commit-and-tag-version generates changelogs and release commits/tags from Conventional Commits; GoReleaser builds and signs packages from an explicitly pushed version tag. See [development.md](development.md) and [releasing.md](releasing.md).
+
 ## Provider configuration
 
 Settings are `endpoint`, `username`, `password`, and `request_timeout`. The first three use `CUPS_ENDPOINT`, `CUPS_USERNAME`, and `CUPS_PASSWORD` only when omitted/null; explicit configuration wins, including explicit empty values which produce errors. There is no implicit local endpoint. Timeout defaults to 30 seconds and is bounded to 1–300. Unknown connection settings are errors before resource operations.

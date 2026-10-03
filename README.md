@@ -61,13 +61,13 @@ See [provider settings](docs/index.md), [the printer resource](docs/resources/pr
 
 ## Continue development
 
-Read [AGENTS.md](AGENTS.md), [the design](docs/design.md), and [the roadmap](docs/roadmap.md). Build and run unit checks with `make build`, `make test`, and `make vet`.
+Read [AGENTS.md](AGENTS.md), [the design](docs/design.md), and [the roadmap](docs/roadmap.md). Install the pinned tools with `mise trust` and `mise run setup`. Run `mise run check` for local/CI checks, or `mise run acceptance` for the complete disposable CUPS loop. Tool versions and tasks live in [mise.toml](mise.toml); [development instructions](docs/development.md) cover setup.
 
 Start the isolated CUPS server and simulated printer, then check the fixture:
 
 ```sh
-docker compose up --build --wait --wait-timeout 120
-docker compose exec -T cups python3 /opt/testenv/smoke.py
+mise run testenv:up
+mise run testenv:smoke
 ```
 
 The server is available at `http://127.0.0.1:8631`. See [testing instructions](docs/testing.md) for the provider acceptance loop, credentials, isolation, reset commands, and limitations. Acceptance tests require explicit opt-in and connection settings.

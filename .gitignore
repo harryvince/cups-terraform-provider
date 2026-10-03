@@ -8,3 +8,6 @@
 crash.log
 .terraformrc.local
 __pycache__/
+
+/.mise/*
+!/.mise/locks/

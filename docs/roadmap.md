@@ -41,6 +41,7 @@ Completion: acceptance tests prove the full lifecycle and import against the dec
 
 - [x] Add CI for unit/protocol checks, isolated acceptance tests, and six-platform packaging previews.
 - [x] Configure Semantic Version tags, GoReleaser, RSA signing, and GitHub Releases.
+- [x] Centralize tool pins and local/CI tasks with mise, and add Conventional Commit changelog/tag preparation.
 - [x] Select the Registry identity and rename the repository to `terraform-provider-cups`.
 - [ ] Register the provider and its public signing key with the Registry.
 - [x] Publish GitHub Release `v0.1.0` with signed six-platform packages.

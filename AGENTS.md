@@ -51,23 +51,23 @@ Keep Linux package installation, service management, print jobs, and direct CUPS
 The test fixture has these runnable checks, from the repository root:
 
 ```sh
-docker compose config --quiet
-docker compose up --build --wait --wait-timeout 120
-docker compose exec -T cups python3 /opt/testenv/smoke.py
-docker compose down
+mise exec -- docker-compose config --quiet
+mise run testenv:up
+mise run testenv:smoke
+mise run testenv:down
 ```
 
 The smoke check validates the isolated CUPS environment directly. Provider checks, from the repository root:
 
 ```sh
-make fmt
-make build
-make test
-make vet
+mise run fmt
+mise run build
+mise run test
+mise run vet
 CUPS_ACC_ENDPOINT=http://127.0.0.1:8631 \
   CUPS_ACC_USERNAME=cups-admin \
   CUPS_ACC_PASSWORD=cups-test-password \
-  make test-acc
+  mise run test:acc
 ```
 
 Start Compose before the acceptance command and shut it down afterward. Acceptance tests require explicit opt-in and settings, use temporary Terraform state and CLI configuration, and reject non-loopback endpoints and port 631. See `docs/testing.md` for credentials and endpoint details. Do not report tests as passing until they actually run.
@@ -85,3 +85,9 @@ In a handoff, describe what changed, what was verified, what remains uncertain, 
 CI checks Go 1.25/1.27, runs isolated Terraform/CUPS acceptance tests, and builds unsigned six-platform snapshots. Version tags trigger CI followed by signed GitHub Releases. Actions and GoReleaser are pinned; verify upstream documentation when updating them. Dedicated RSA signing secrets are configured in GitHub; the public key is `release-signing-key.asc`. Never read or print the ignored `.release-signing/` private material in routine work or stage it. Preserve its local backup.
 
 The owner selected `harryvince/cups` and authorized renaming the public repository to `terraform-provider-cups`. The module, provider address, and examples match this identity. GitHub Release `v0.1.0` is published. Registry registration and clean Registry installation remain unverified; local development uses a development override. Do not claim Registry publication until registration, a selected release, and a clean installation have been verified. Do not create release tags solely to test the workflow.
+
+## Tool and task management
+
+Use mise for project tools and tasks. Tool versions belong in `mise.toml` and `mise.ci-min.toml`, including the bootstrap mise version under `vars.mise_version`; do not duplicate tool pins in workflow YAML. Keep the lockfiles and `.mise/locks/` npm dependency bundle committed together. Go module dependencies remain in `go.mod`/`go.sum`. Git, Docker Engine/CLI, GPG, and CI bootstrap Python are system prerequisites. The Makefile only delegates to mise for compatibility.
+
+Run `mise run setup`, `mise run check`, and relevant fixture tasks. CI uses the same tasks. `mise run release:preview` is safe for routine validation. `mise run release:prepare` uses commit-and-tag-version to generate CHANGELOG.md, a Conventional release commit, and a local version tag; run it only for a requested release. Do not push a release tag as part of an ordinary tooling change.

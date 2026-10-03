@@ -10,7 +10,7 @@ The first release passed the GitHub Actions checks. Downloaded assets were indep
 
 [GoReleaser](../.goreleaser.yaml) builds Linux, macOS, and Windows packages for amd64 and arm64 with CGO disabled. Each ZIP contains a versioned provider binary and the MIT license. Release assets include SHA256 checksums, their detached GPG signature, and a protocol-6 Registry manifest included in the checksums. Cross-compilation verifies packaging; runtime lifecycle compatibility is currently verified only on Linux amd64.
 
-Actions are pinned to commit hashes, and GoReleaser is pinned to v2.18.2. Update pins deliberately and run the checks when changing them. The release job alone has repository write permission; pull-request checks do not need secrets.
+Actions are pinned to commit hashes. Tool versions, including GoReleaser and mise itself, are maintained in `mise.toml`; `mise.ci-min.toml` supplies the minimum-Go override. Update pins deliberately and run the checks when changing them. The release job alone has repository write permission; pull-request checks do not need secrets.
 
 ## Signing key
 
@@ -26,12 +26,30 @@ To use another key, replace both Actions secrets and the committed public key, u
 
 ## Publish a GitHub Release
 
-Review the schema and documentation, choose a Semantic Version, and ensure CI passes on the intended commit. From an up-to-date `main`, publish a tag; these commands illustrate a first version and must be run only when that version is selected:
+Release preparation uses [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version), the maintained fork of the deprecated standard-version. Mise pins both Node and the release CLI. Conventional Commits determine the suggested version; the current version comes from the latest Git tag, so this Go project needs no package.json or duplicated version file. Configuration is in [.versionrc.json](../.versionrc.json).
+
+From an up-to-date, clean `main`, install the pinned tools and preview changes:
 
 ```sh
-git tag v0.1.0
-git push origin v0.1.0
+mise run setup
+mise run release:preview
 ```
+
+When a release is requested, prepare its changelog, Conventional Commit, and local annotated `v` tag:
+
+```sh
+mise run release:prepare
+# Or choose the version explicitly:
+# mise run release:prepare -- --release-as 0.2.0
+```
+
+The task rejects a dirty working tree or a branch other than `main`. It does not push or publish. Review `CHANGELOG.md`, the release commit, and the generated tag, then push that specific tag with the branch. For example, if preparation selected `v0.1.1`:
+
+```sh
+git push --atomic origin main v0.1.1
+```
+
+This starts the publishing workflow. Preview supports the same CLI arguments, including `--release-as` and `--prerelease rc`. No new release is created when setting up or testing this tooling. The existing `v0.1.0` history is recorded in [CHANGELOG.md](../CHANGELOG.md).
 
 [Release](../.github/workflows/release.yml) reruns CI before publishing. A tag such as `v0.1.0-rc.1` produces a GitHub prerelease. The workflow refuses to replace an existing release; use a new version for corrected published artifacts. Inspect the Actions run and verify the release's archives, manifest, checksum file, and `.sig` asset. Tags and GitHub Releases alone do not make the provider discoverable in the Terraform Registry.
 
@@ -52,11 +70,11 @@ Follow the current [provider publishing requirements](https://developer.hashicor
 
 ## Local packaging verification
 
-Install GoReleaser v2.18.2 and run:
+Install the mise tools and run:
 
 ```sh
-goreleaser check
-goreleaser release --snapshot --clean --skip=publish,sign
+mise run lint
+mise run release:snapshot
 ```
 
 Snapshots land in ignored `dist/` and do not create a tag or GitHub Release. The snapshot version includes the commit identifier. To verify a signed release, import the committed public key, verify the detached signature, then check the SHA256 sums in a directory containing all named assets:
