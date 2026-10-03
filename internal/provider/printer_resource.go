@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/harryvince/cups-terraform-provider/internal/cups"
+	"github.com/harryvince/terraform-provider-cups/internal/cups"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"

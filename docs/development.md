@@ -13,7 +13,7 @@ make test
 make vet
 ```
 
-The build produces `bin/terraform-provider-cups`. Unit tests use local HTTP test servers; acceptance tests skip unless explicitly enabled. The module path matches the existing repository: `github.com/harryvince/cups-terraform-provider`.
+The build produces `bin/terraform-provider-cups`. Unit tests use local HTTP test servers; acceptance tests skip unless explicitly enabled. The module path matches the existing repository: `github.com/harryvince/terraform-provider-cups`.
 
 ## Run Terraform against Compose
 
@@ -30,7 +30,7 @@ Create an ignored, repository-local Terraform CLI configuration. These commands 
 cat > .terraformrc.local <<EOF
 provider_installation {
   dev_overrides {
-    "terraform.local/local/cups" = "$PWD/bin"
+    "registry.terraform.io/harryvince/cups" = "$PWD/bin"
   }
   direct {}
 }
@@ -69,3 +69,20 @@ unset TF_CLI_CONFIG_FILE CUPS_ENDPOINT CUPS_USERNAME CUPS_PASSWORD
 Destroy deletes the queue; removing the stack resets all its container state. Rebuilding the provider is enough for subsequent CLI commands to load code changes. Keep state files and the local CLI configuration out of Git; the repository's `.gitignore` covers them.
 
 For an automated lifecycle loop that builds its own binary and uses temporary Terraform configuration and state, see [acceptance testing](testing.md#provider-acceptance-loop).
+
+## Migrating an earlier POC checkout
+
+The repository is now `harryvince/terraform-provider-cups`, and the selected provider address is `registry.terraform.io/harryvince/cups`. Update existing checkout remotes and rebuild:
+
+```sh
+git remote set-url origin https://github.com/harryvince/terraform-provider-cups.git
+make build
+```
+
+Update `required_providers` and the local `dev_overrides` key to the new address. If you have existing POC state under the old address, back up that state and migrate its provider reference from the configuration directory:
+
+```sh
+terraform state replace-provider terraform.local/local/cups registry.terraform.io/harryvince/cups
+```
+
+[This command](https://developer.hashicorp.com/terraform/cli/commands/state/replace-provider) changes Terraform's provider reference without modifying CUPS queues. No Registry version is published yet, so continue using the development override and skip `terraform init` until publication.

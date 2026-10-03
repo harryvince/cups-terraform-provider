@@ -2,7 +2,7 @@
 
 The provider manages queue configuration on an existing CUPS server. It uses HTTP Basic authentication and IPP administrative operations. No package installation, service restart, print job submission, or discovery happens during configuration or planning.
 
-Use the local development source address `terraform.local/local/cups` with a [development override](development.md). This provider is not published.
+Use the selected source address `registry.terraform.io/harryvince/cups` with a [development override](development.md). This provider is not published.
 
 | Setting | Type | Behavior |
 | --- | --- | --- |

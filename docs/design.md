@@ -25,7 +25,7 @@ Implemented architecture:
 
 Use `go-ipp` v1.7.0 as the IPP codec and a dedicated Go HTTP client as transport. This avoids the upstream convenience client's transport defaults and lets this provider enforce context deadlines, Basic authentication, TLS verification, redirect rejection, and bounded response sizes. Administrative lifecycle operations have been verified against the Compose fixture. The upstream decoder expects buffered input and can panic on malformed signed length fields; the client buffers responses and confines panic recovery to the decoder boundary. Unit tests cover these cases.
 
-The Go module path is `github.com/harryvince/cups-terraform-provider`, matching the existing repository. The local provider address is `terraform.local/local/cups`; no Terraform Registry namespace has been selected or published. Framework v1.19.0 requires Go 1.25 or newer. Tested versions are Go 1.27.1 and Terraform 1.16.4 on Linux amd64; no broader compatibility claim is made.
+The Go module path is `github.com/harryvince/terraform-provider-cups`, matching the existing repository. The selected provider address is `registry.terraform.io/harryvince/cups`; Registry registration and publication are still pending. Local usage requires a development override. Framework v1.19.0 requires Go 1.25 or newer. Tested versions are Go 1.27.1 and Terraform 1.16.4 on Linux amd64; no broader compatibility claim is made.
 
 Current layout:
 
@@ -87,7 +87,7 @@ Acceptance tests are opt-in, require explicit settings, and reject non-loopback 
 
 ## Decisions still open
 
-1. Choose a Terraform Registry namespace, confirm its required repository rename, and complete registration. GitHub Actions and signed release packaging are configured; see [releasing.md](releasing.md).
+1. Complete Terraform Registry registration for the selected `harryvince/cups` identity. The repository has been renamed to `terraform-provider-cups`. GitHub Actions and signed release packaging are configured; see [releasing.md](releasing.md).
 2. Expand compatibility coverage across CUPS, Terraform, Go, and host platforms.
 3. Add end-to-end TLS tests and decide whether additional authentication/transport methods are needed.
 4. Decide whether to add enablement, accepting-jobs settings, model selection, or legacy PPD support.

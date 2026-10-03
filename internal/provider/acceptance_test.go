@@ -16,7 +16,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/harryvince/cups-terraform-provider/internal/cups"
+	"github.com/harryvince/terraform-provider-cups/internal/cups"
 )
 
 // This test intentionally runs the real Terraform CLI with a locally built
@@ -58,7 +58,7 @@ func TestAcceptancePrinter(t *testing.T) {
 		t.Fatalf("provider build: %s\n%s", err, output)
 	}
 	rc := filepath.Join(dir, "terraformrc")
-	if err := os.WriteFile(rc, []byte(fmt.Sprintf("provider_installation {\n dev_overrides {\n  \"terraform.local/local/cups\" = %s\n }\n direct {}\n}\n", strconv.Quote(bin))), 0600); err != nil {
+	if err := os.WriteFile(rc, []byte(fmt.Sprintf("provider_installation {\n dev_overrides {\n  \"registry.terraform.io/harryvince/cups\" = %s\n }\n direct {}\n}\n", strconv.Quote(bin))), 0600); err != nil {
 		t.Fatal(err)
 	}
 	var environment []string
@@ -111,7 +111,7 @@ func TestAcceptancePrinter(t *testing.T) {
 		}
 		config := fmt.Sprintf(`terraform {
   required_providers {
-    cups = { source = "terraform.local/local/cups" }
+    cups = { source = "registry.terraform.io/harryvince/cups" }
   }
 }
 provider "cups" {}

@@ -33,13 +33,13 @@ Build with Go 1.25 or newer. The POC has been tested on Linux amd64 with Go 1.27
 
 ## Configuration
 
-This configuration targets the Compose fixture after following [local development setup](docs/development.md). `terraform.local/local/cups` is a local development address, not a published package.
+This configuration targets the Compose fixture after following [local development setup](docs/development.md). `registry.terraform.io/harryvince/cups` is the selected provider address; until publication, use a development override to load the local binary.
 
 ```hcl
 terraform {
   required_providers {
     cups = {
-      source = "terraform.local/local/cups"
+      source = "registry.terraform.io/harryvince/cups"
     }
   }
 }

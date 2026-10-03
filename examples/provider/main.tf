@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     cups = {
-      source = "terraform.local/local/cups"
+      source = "registry.terraform.io/harryvince/cups"
     }
   }
 }

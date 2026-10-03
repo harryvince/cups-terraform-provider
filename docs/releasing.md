@@ -33,19 +33,18 @@ git push origin v0.1.0
 
 [Release](../.github/workflows/release.yml) reruns CI before publishing. A tag such as `v0.1.0-rc.1` produces a GitHub prerelease. The workflow refuses to replace an existing release; use a new version for corrected published artifacts. Inspect the Actions run and verify the release's archives, manifest, checksum file, and `.sig` asset. Tags and GitHub Releases alone do not make the provider discoverable in the Terraform Registry.
 
-The provider still uses the development address `terraform.local/local/cups`. GitHub downloads can be used with the development override described in [development.md](development.md), by extracting the matching archive into the configured binary directory. This is not a Registry installation workflow.
+The provider uses the selected address `registry.terraform.io/harryvince/cups`, which requires a development override until Registry publication. GitHub downloads can be used with the development override described in [development.md](development.md), by extracting the matching archive into the configured binary directory. This is not a Registry installation workflow.
 
 ## Connect the public Terraform Registry
 
-HashiCorp requires a public GitHub repository named `terraform-provider-{NAME}`. This repository's current name, `cups-terraform-provider`, does not satisfy that requirement. A potential destination is `harryvince/cups`, requiring a repository rename to `terraform-provider-cups`; the owner must select that identity before the rename or source-address changes are made.
+HashiCorp requires a public GitHub repository named `terraform-provider-{NAME}`. The owner selected `harryvince/cups`, and the repository is now [harryvince/terraform-provider-cups](https://github.com/harryvince/terraform-provider-cups). The Go module, provider server address, documentation, and examples match this identity. Registration and publication remain pending.
 
-After selecting the destination:
+To finish registration:
 
-1. Rename the repository and update the Go module/imports, provider server address, documentation, and examples to match the selected repository and Registry source address.
-2. Sign in to the [Terraform Registry](https://registry.terraform.io/) using the GitHub account that owns the public repository.
-3. Add the committed armored public signing key in the Registry's user settings under signing keys.
-4. Select **Publish → Provider**, choose the repository, and complete registration. The Registry connects release notifications to package ingestion.
-5. Publish the selected version through the tag workflow, check that the Registry ingests its signed assets, and verify `terraform init` from a clean configuration using the real source address and version constraint.
+1. Sign in to the [Terraform Registry](https://registry.terraform.io/) using the GitHub account that owns the public repository.
+2. Add the committed armored public signing key in the Registry's user settings under signing keys.
+3. Select **Publish → Provider**, choose the repository, and complete registration. The Registry connects release notifications to package ingestion.
+4. Publish the selected version through the tag workflow, check that the Registry ingests its signed assets, and verify `terraform init` from a clean configuration using the real source address and version constraint.
 
 Follow the current [provider publishing requirements](https://developer.hashicorp.com/terraform/registry/providers/publishing). Public Registry registration and clean installation must be verified before documenting the provider as Registry-published.
 

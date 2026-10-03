@@ -1,4 +1,4 @@
-module github.com/harryvince/cups-terraform-provider
+module github.com/harryvince/terraform-provider-cups
 
 go 1.25.0
 

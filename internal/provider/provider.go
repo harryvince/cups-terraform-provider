@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/harryvince/cups-terraform-provider/internal/cups"
+	"github.com/harryvince/terraform-provider-cups/internal/cups"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"

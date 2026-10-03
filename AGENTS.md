@@ -25,7 +25,7 @@ After completing changes and the relevant verification, commit the task's change
 
 ## Working direction
 
-The POC manages driverless IPP queues on an existing CUPS server. It uses Go with the Terraform Plugin Framework and a separate IPP/CUPS client. The module path matches the repository, `github.com/harryvince/cups-terraform-provider`; the local-only provider address is `terraform.local/local/cups`.
+The POC manages driverless IPP queues on an existing CUPS server. It uses Go with the Terraform Plugin Framework and a separate IPP/CUPS client. The module path matches the repository, `github.com/harryvince/terraform-provider-cups`; the selected provider address is `registry.terraform.io/harryvince/cups`.
 
 The implemented POC schema remains provisional until release. Resolve routine implementation details using the task context. Ask for missing information when it materially affects scope or public identity, such as the publishing namespace. Do not invent a registry namespace. The user has selected the MIT license; retain the root `LICENSE` file.
 
@@ -84,4 +84,4 @@ In a handoff, describe what changed, what was verified, what remains uncertain, 
 
 CI checks Go 1.25/1.27, runs isolated Terraform/CUPS acceptance tests, and builds unsigned six-platform snapshots. Version tags trigger CI followed by signed GitHub Releases. Actions and GoReleaser are pinned; verify upstream documentation when updating them. Dedicated RSA signing secrets are configured in GitHub; the public key is `release-signing-key.asc`. Never read or print the ignored `.release-signing/` private material in routine work or stage it. Preserve its local backup.
 
-The current repository name is not eligible for public Terraform Registry registration. The owner must select the namespace and authorize the associated repository rename/source-address updates. Do not claim Registry publication until registration, a selected release, and a clean installation have been verified. Do not create release tags solely to test the workflow.
+The owner selected `harryvince/cups` and authorized renaming the public repository to `terraform-provider-cups`. The module, provider address, and examples match this identity. Registry registration and publication remain pending; local development uses a development override. Do not claim Registry publication until registration, a selected release, and a clean installation have been verified. Do not create release tags solely to test the workflow.

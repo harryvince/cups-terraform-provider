@@ -5,7 +5,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/harryvince/cups-terraform-provider/internal/provider"
+	"github.com/harryvince/terraform-provider-cups/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
@@ -15,7 +15,7 @@ func main() {
 	debug := flag.Bool("debug", false, "Enable debugger support")
 	flag.Parse()
 	if err := providerserver.Serve(context.Background(), provider.New(version), providerserver.ServeOpts{
-		Address: "terraform.local/local/cups",
+		Address: "registry.terraform.io/harryvince/cups",
 		Debug:   *debug,
 	}); err != nil {
 		log.Fatal(err)

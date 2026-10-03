@@ -6,8 +6,8 @@ The minimal provider POC and its disposable test environment are implemented. Up
 
 - [x] Implement the first scope: driverless queues on an existing CUPS server.
 - [x] Add the MIT license selected by the repository owner.
-- [x] Use the existing repository path as the Go module path; use a local-only provider address during development.
-- [ ] Select a publishing registry namespace with the repository owner.
+- [x] Use the existing repository path as the Go module path; use a development override until Registry publication.
+- [x] Select `harryvince/cups` with the repository owner.
 - [x] Verify the CUPS client approach, including administrative authentication and driverless model handling.
 - [x] Add an isolated Docker Compose CUPS server, simulated printer, and lifecycle smoke check (see [testing.md](testing.md)).
 - [x] Record tested Go, Terraform, and CUPS versions based on the POC test loop.
@@ -41,7 +41,8 @@ Completion: acceptance tests prove the full lifecycle and import against the dec
 
 - [x] Add CI for unit/protocol checks, isolated acceptance tests, and six-platform packaging previews.
 - [x] Configure Semantic Version tags, GoReleaser, RSA signing, and GitHub Releases.
-- [ ] Select the Registry identity, rename the repository if needed, and register its public signing key.
+- [x] Select the Registry identity and rename the repository to `terraform-provider-cups`.
+- [ ] Register the provider and its public signing key with the Registry.
 - [ ] Publish a selected version and verify clean installation from the Registry.
 - [ ] Publish installation instructions using the real provider source address.
 - [ ] Review documentation and examples against the released schema.
