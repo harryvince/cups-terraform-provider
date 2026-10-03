@@ -1,6 +1,8 @@
 # Publishing the provider
 
-GitHub Actions runs checks on pull requests and `main`. Pushing a version tag runs those checks again and uses GoReleaser to build, sign, and publish a GitHub Release. No version has been published yet. Terraform Registry registration remains a separate setup step.
+GitHub Actions runs checks on pull requests and `main`. Pushing a version tag runs those checks again and uses GoReleaser to build, sign, and publish a GitHub Release. [GitHub Release v0.1.0](https://github.com/harryvince/terraform-provider-cups/releases/tag/v0.1.0) is published. Terraform Registry registration remains a separate setup step.
+
+The first release passed the GitHub Actions checks. Downloaded assets were independently checked for the expected signing fingerprint, all SHA256 sums, protocol-6 manifest, and six ZIP layouts. The released Linux amd64 binary was installed through a temporary filesystem mirror and loaded by Terraform to obtain the `cups_printer` schema. This verifies the downloadable binary, not Registry ingestion or installation.
 
 ## Checks and packages
 
@@ -37,14 +39,14 @@ The provider uses the selected address `registry.terraform.io/harryvince/cups`, 
 
 ## Connect the public Terraform Registry
 
-HashiCorp requires a public GitHub repository named `terraform-provider-{NAME}`. The owner selected `harryvince/cups`, and the repository is now [harryvince/terraform-provider-cups](https://github.com/harryvince/terraform-provider-cups). The Go module, provider server address, documentation, and examples match this identity. Registration and publication remain pending.
+HashiCorp requires a public GitHub repository named `terraform-provider-{NAME}`. The owner selected `harryvince/cups`, and the repository is now [harryvince/terraform-provider-cups](https://github.com/harryvince/terraform-provider-cups). The Go module, provider server address, documentation, and examples match this identity. GitHub Release `v0.1.0` is available; Registry registration and installation remain unverified.
 
 To finish registration:
 
 1. Sign in to the [Terraform Registry](https://registry.terraform.io/) using the GitHub account that owns the public repository.
 2. Add the committed armored public signing key in the Registry's user settings under signing keys.
 3. Select **Publish → Provider**, choose the repository, and complete registration. The Registry connects release notifications to package ingestion.
-4. Publish the selected version through the tag workflow, check that the Registry ingests its signed assets, and verify `terraform init` from a clean configuration using the real source address and version constraint.
+4. Check that the Registry ingests the existing `v0.1.0` release, then verify `terraform init` from a clean configuration using `harryvince/cups` with version `0.1.0` and no development override. Future versions use the tag workflow.
 
 Follow the current [provider publishing requirements](https://developer.hashicorp.com/terraform/registry/providers/publishing). Public Registry registration and clean installation must be verified before documenting the provider as Registry-published.
 

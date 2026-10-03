@@ -4,7 +4,7 @@
 
 This repository is for a Terraform provider that manages a Linux CUPS installation. The user requested documentation and these instructions first so new chats can resume with project context.
 
-The repository has a working Go provider POC, a Docker Compose CUPS test environment, unit/framework protocol tests, and opt-in acceptance tests using the real Terraform CLI. GitHub Actions CI and signed GoReleaser releases are configured. The provider is not published. Verify the current repository before relying on this statement; update it as code is added.
+The repository has a working Go provider POC, a Docker Compose CUPS test environment, unit/framework protocol tests, and opt-in acceptance tests using the real Terraform CLI. GitHub Actions CI and signed GoReleaser releases are configured. The initial POC is published on GitHub Releases as `v0.1.0`; Terraform Registry registration and clean Registry installation remain unverified. Verify the current repository before relying on this statement; update it as code is added.
 
 Read these files at the start of substantive work:
 
@@ -27,7 +27,7 @@ After completing changes and the relevant verification, commit the task's change
 
 The POC manages driverless IPP queues on an existing CUPS server. It uses Go with the Terraform Plugin Framework and a separate IPP/CUPS client. The module path matches the repository, `github.com/harryvince/terraform-provider-cups`; the selected provider address is `registry.terraform.io/harryvince/cups`.
 
-The implemented POC schema remains provisional until release. Resolve routine implementation details using the task context. Ask for missing information when it materially affects scope or public identity, such as the publishing namespace. Do not invent a registry namespace. The user has selected the MIT license; retain the root `LICENSE` file.
+The initial POC schema is published in `v0.1.0` and may change in subsequent early versions. Resolve routine implementation details using the task context. Ask for missing information when it materially affects scope or public identity, such as the publishing namespace. Do not invent a registry namespace. The user has selected the MIT license; retain the root `LICENSE` file.
 
 Keep Linux package installation, service management, print jobs, and direct CUPS configuration-file editing outside the first resource unless the user expands scope. Creation uses the `everywhere` model and requires a device reachable from CUPS. Name/device URI changes replace a queue; description/location changes update in place and omitted metadata clears it. Enablement and accepting-jobs settings remain outside the POC.
 
@@ -84,4 +84,4 @@ In a handoff, describe what changed, what was verified, what remains uncertain, 
 
 CI checks Go 1.25/1.27, runs isolated Terraform/CUPS acceptance tests, and builds unsigned six-platform snapshots. Version tags trigger CI followed by signed GitHub Releases. Actions and GoReleaser are pinned; verify upstream documentation when updating them. Dedicated RSA signing secrets are configured in GitHub; the public key is `release-signing-key.asc`. Never read or print the ignored `.release-signing/` private material in routine work or stage it. Preserve its local backup.
 
-The owner selected `harryvince/cups` and authorized renaming the public repository to `terraform-provider-cups`. The module, provider address, and examples match this identity. Registry registration and publication remain pending; local development uses a development override. Do not claim Registry publication until registration, a selected release, and a clean installation have been verified. Do not create release tags solely to test the workflow.
+The owner selected `harryvince/cups` and authorized renaming the public repository to `terraform-provider-cups`. The module, provider address, and examples match this identity. GitHub Release `v0.1.0` is published. Registry registration and clean Registry installation remain unverified; local development uses a development override. Do not claim Registry publication until registration, a selected release, and a clean installation have been verified. Do not create release tags solely to test the workflow.

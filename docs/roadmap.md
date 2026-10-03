@@ -43,7 +43,8 @@ Completion: acceptance tests prove the full lifecycle and import against the dec
 - [x] Configure Semantic Version tags, GoReleaser, RSA signing, and GitHub Releases.
 - [x] Select the Registry identity and rename the repository to `terraform-provider-cups`.
 - [ ] Register the provider and its public signing key with the Registry.
-- [ ] Publish a selected version and verify clean installation from the Registry.
+- [x] Publish GitHub Release `v0.1.0` with signed six-platform packages.
+- [ ] Verify clean installation from the Registry.
 - [ ] Publish installation instructions using the real provider source address.
 - [ ] Review documentation and examples against the released schema.
 

@@ -6,7 +6,7 @@ The confirmed goal is a Terraform provider for managing a Linux CUPS installatio
 
 The user selected the [MIT License](../LICENSE) for this repository.
 
-The repository now implements a minimal provider POC. This document records its decisions and remaining limitations. The schema is provisional until a release; deferred capabilities are not implemented.
+The repository now implements a minimal provider POC. This document records its decisions and remaining limitations. GitHub Release `v0.1.0` publishes the initial POC schema; early versions may change it. Deferred capabilities are not implemented.
 
 ## Initial boundary
 
@@ -25,7 +25,7 @@ Implemented architecture:
 
 Use `go-ipp` v1.7.0 as the IPP codec and a dedicated Go HTTP client as transport. This avoids the upstream convenience client's transport defaults and lets this provider enforce context deadlines, Basic authentication, TLS verification, redirect rejection, and bounded response sizes. Administrative lifecycle operations have been verified against the Compose fixture. The upstream decoder expects buffered input and can panic on malformed signed length fields; the client buffers responses and confines panic recovery to the decoder boundary. Unit tests cover these cases.
 
-The Go module path is `github.com/harryvince/terraform-provider-cups`, matching the existing repository. The selected provider address is `registry.terraform.io/harryvince/cups`; Registry registration and publication are still pending. Local usage requires a development override. Framework v1.19.0 requires Go 1.25 or newer. Tested versions are Go 1.27.1 and Terraform 1.16.4 on Linux amd64; no broader compatibility claim is made.
+The Go module path is `github.com/harryvince/terraform-provider-cups`, matching the existing repository. The selected provider address is `registry.terraform.io/harryvince/cups`; GitHub Release `v0.1.0` is published; Registry registration and installation remain unverified. Local usage requires a development override. Framework v1.19.0 requires Go 1.25 or newer. Tested versions are Go 1.27.1 and Terraform 1.16.4 on Linux amd64; no broader compatibility claim is made.
 
 Current layout:
 
